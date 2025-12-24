@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Writes HTML expense reports with basic inline styling.
  */
-public class HtmlReportWriter {
+public class HtmlReportWriter implements ReportWriter {
     private final DateTimeFormatter dateFormatter;
     private final DateTimeFormatter monthFormatter;
 
@@ -25,6 +25,7 @@ public class HtmlReportWriter {
         this.monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
     }
 
+    @Override
     public void writeReport(String filePath, ExpenseRepository repository) throws IOException {
         List<Expense> allExpenses = repository.findAll();
         Summarizer summarizer = new Summarizer(allExpenses);

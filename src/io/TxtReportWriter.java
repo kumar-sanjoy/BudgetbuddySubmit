@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Writes plain-text expense reports with ASCII formatting.
  */
-public class TxtReportWriter {
+public class TxtReportWriter implements ReportWriter {
     private final DateTimeFormatter dateFormatter;
     private final DateTimeFormatter monthFormatter;
 
@@ -26,6 +26,7 @@ public class TxtReportWriter {
         this.monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
     }
 
+    @Override
     public void writeReport(String filePath, ExpenseRepository repository) throws IOException {
         List<Expense> allExpenses = repository.findAll();
         Summarizer summarizer = new Summarizer(allExpenses);

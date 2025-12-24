@@ -1,6 +1,7 @@
 package cli;
 
 import io.CsvLoader;
+import io.ReportWriter;
 import io.HtmlReportWriter;
 import io.TxtReportWriter;
 import model.Expense;
@@ -161,7 +162,7 @@ public class CommandHandler {
      */
     public void handleExportTxt(String outputPath) {
         try {
-            TxtReportWriter writer = new TxtReportWriter();
+            ReportWriter writer = new TxtReportWriter();
 
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
@@ -180,7 +181,7 @@ public class CommandHandler {
      */
     public void handleExportHtml(String outputPath) {
         try {
-            HtmlReportWriter writer = new HtmlReportWriter();
+            ReportWriter writer = new HtmlReportWriter();
 
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
