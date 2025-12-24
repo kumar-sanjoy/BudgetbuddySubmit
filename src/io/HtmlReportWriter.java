@@ -7,9 +7,7 @@ import service.Summarizer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +15,10 @@ import java.util.Map;
  * Writes HTML expense reports with basic inline styling.
  */
 public class HtmlReportWriter implements ReportWriter {
-    private final DateTimeFormatter dateFormatter;
-    private final DateTimeFormatter monthFormatter;
+    private final ReportFormatter reportFormatter;
 
     public HtmlReportWriter() {
-        this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        this.monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        this.reportFormatter = new HtmlReportFormatter();
     }
 
     @Override
@@ -66,8 +62,8 @@ public class HtmlReportWriter implements ReportWriter {
 
         Map<YearMonth, Double> monthlyTotals = summarizer.monthlyTotals();
         for (Map.Entry<YearMonth, Double> entry : monthlyTotals.entrySet()) {
-            String monthStr = formatMonth(entry.getKey());
-            String amountStr = formatAmount(entry.getValue());
+            String monthStr = reportFormatter.formatMonth(entry.getKey());
+            String amountStr = reportFormatter.formatAmount(entry.getValue());
             writer.write(String.format("<tr><td>%s</td><td>%s</td></tr>\n", monthStr, amountStr));
         }
         writer.write("</table>\n");
@@ -86,8 +82,8 @@ public class HtmlReportWriter implements ReportWriter {
         for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
             String category = entry.getKey();
             double amount = entry.getValue();
-            String amountStr = formatAmount(amount);
-            String barHtml = createBarHtml(amount, maxAmount);
+            String amountStr = reportFormatter.formatAmount(amount);
+            String barHtml = reportFormatter.createBar(amount, maxAmount);
             writer.write(String.format("<tr><td>%s</td><td>%s</td><td>%s</td></tr>\n",
                     category, amountStr, barHtml));
         }
@@ -96,7 +92,7 @@ public class HtmlReportWriter implements ReportWriter {
 
     private void writeGrandTotal(BufferedWriter writer, Summarizer summarizer) throws IOException {
         writer.write(String.format("<p class=\"total\">Grand Total: %s</p>\n",
-                formatAmount(summarizer.grandTotal())));
+                reportFormatter.formatAmount(summarizer.grandTotal())));
     }
 
     private void writeRecentEntries(BufferedWriter writer, List<Expense> expenses) throws IOException {
@@ -107,11 +103,11 @@ public class HtmlReportWriter implements ReportWriter {
         int count = 0;
         for (int i = expenses.size() - 1; i >= 0 && count < 10; i--, count++) {
             Expense exp = expenses.get(i);
-            String dateStr = formatDate(exp.getDate());
+            String dateStr = reportFormatter.formatDate(exp.getDate());
             writer.write(String.format("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>\n",
                     dateStr,
                     exp.getCategory(),
-                    formatAmount(exp.getAmount()),
+                    reportFormatter.formatAmount(exp.getAmount()),
                     exp.getNotes()));
         }
         writer.write("</table>\n");
@@ -119,22 +115,5 @@ public class HtmlReportWriter implements ReportWriter {
 
     private void writeHtmlFooter(BufferedWriter writer) throws IOException {
         writer.write("</body>\n</html>\n");
-    }
-
-    private String formatDate(LocalDate date) {
-        return date.format(dateFormatter);
-    }
-
-    private String formatMonth(YearMonth month) {
-        return month.format(monthFormatter);
-    }
-
-    private String formatAmount(double amount) {
-        return String.format("%.2f", amount);
-    }
-
-    private String createBarHtml(double value, double maxValue) {
-        int barWidth = (int) Math.round((value * 200) / maxValue);
-        return String.format("<div class=\"bar\" style=\"width: %dpx;\"></div>", barWidth);
     }
 }

@@ -8,9 +8,7 @@ import util.TextUtils;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -18,12 +16,10 @@ import java.util.Map;
  * Writes plain-text expense reports with ASCII formatting.
  */
 public class TxtReportWriter implements ReportWriter {
-    private final DateTimeFormatter dateFormatter;
-    private final DateTimeFormatter monthFormatter;
+    private ReportFormatter reportFormatter;
 
     public TxtReportWriter() {
-        this.dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        this.monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
+        this.reportFormatter = new TxtReportFormatter();
     }
 
     @Override
@@ -54,8 +50,8 @@ public class TxtReportWriter implements ReportWriter {
 
         Map<YearMonth, Double> monthlyTotals = summarizer.monthlyTotals();
         for (Map.Entry<YearMonth, Double> entry : monthlyTotals.entrySet()) {
-            String monthStr = formatMonth(entry.getKey());
-            String amountStr = formatAmount(entry.getValue());
+            String monthStr = reportFormatter.formatMonth(entry.getKey());
+            String amountStr = reportFormatter.formatAmount(entry.getValue());
             writer.write(String.format("%-10s : %12s\n", monthStr, amountStr));
         }
         writer.write("\n");
@@ -73,8 +69,8 @@ public class TxtReportWriter implements ReportWriter {
         for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
             String category = entry.getKey();
             double amount = entry.getValue();
-            String amountStr = formatAmount(amount);
-            String bar = createBar(amount, maxAmount);
+            String amountStr = reportFormatter.formatAmount(amount);
+            String bar = reportFormatter.createBar(amount, maxAmount);
             writer.write(String.format("%-15s %12s  %s\n", category, amountStr, bar));
         }
         writer.write("\n");
@@ -82,7 +78,7 @@ public class TxtReportWriter implements ReportWriter {
 
     private void writeGrandTotal(BufferedWriter writer, Summarizer summarizer) throws IOException {
         writer.write(TextUtils.separator(60) + "\n");
-        writer.write(String.format("GRAND TOTAL: %s\n", formatAmount(summarizer.grandTotal())));
+        writer.write(String.format("GRAND TOTAL: %s\n", reportFormatter.formatAmount(summarizer.grandTotal())));
         writer.write(TextUtils.separator(60) + "\n");
     }
 
@@ -93,28 +89,14 @@ public class TxtReportWriter implements ReportWriter {
         int count = 0;
         for (int i = expenses.size() - 1; i >= 0 && count < 10; i--, count++) {
             Expense exp = expenses.get(i);
-            String dateStr = formatDate(exp.getDate());
+            String dateStr = reportFormatter.formatDate(exp.getDate());
             writer.write(String.format("%s  %-12s %10s  %s\n",
                     dateStr,
                     exp.getCategory(),
-                    formatAmount(exp.getAmount()),
+                    reportFormatter.formatAmount(exp.getAmount()),
                     exp.getNotes()));
         }
     }
 
-    private String formatDate(LocalDate date) {
-        return date.format(dateFormatter);
-    }
-
-    private String formatMonth(YearMonth month) {
-        return month.format(monthFormatter);
-    }
-
-    private String formatAmount(double amount) {
-        return String.format("%.2f", amount);
-    }
-
-    private String createBar(double value, double maxValue) {
-        return TextUtils.createBar(value, maxValue, 30);
-    }
+    
 }
