@@ -81,7 +81,7 @@ public class CommandHandler {
         try {
             YearMonth yearMonth = DateUtils.parseYearMonth(monthStr);
 
-            ExpenseRepository localRepo = new ExpenseRepository();
+            ExpenseRepository localRepo = ExpenseRepository.getInstance();
             localRepo.addAll(mainRepository.findAll());
             // redundent object created of ExpenseRepository, 
             // can be solved by using stream or adding a temp list in the ExpenseRepository class
@@ -163,7 +163,7 @@ public class CommandHandler {
         try {
             TxtReportWriter writer = new TxtReportWriter();
 
-            ExpenseRepository exportRepo = new ExpenseRepository();
+            ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
             // another ExpenseRepository Created. eliminate object creation
 
@@ -182,7 +182,7 @@ public class CommandHandler {
         try {
             HtmlReportWriter writer = new HtmlReportWriter();
 
-            ExpenseRepository exportRepo = new ExpenseRepository();
+            ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
             // another instance of expenseRepository created.
 

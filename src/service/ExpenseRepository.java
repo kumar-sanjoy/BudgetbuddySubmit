@@ -4,6 +4,7 @@ import model.Expense;
 
 import java.time.YearMonth;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,14 +12,20 @@ import java.util.stream.Collectors;
  * In-memory repository for expense data.
  */
 public class ExpenseRepository {
-    private final List<Expense> expenses;
+    private static final ExpenseRepository INSTANCE = new ExpenseRepository();
+    private final List<Expense> expenses = Collections.synchronizedList(new ArrayList<>());
+    // for thread safety
 
     /**
      * Creates a new empty repository.
      */
-    public ExpenseRepository() {
-        this.expenses = new ArrayList<>();
-        System.out.println("Created new ExpenseRepository instance");
+    private ExpenseRepository() {
+        System.out.println("Created ExpenseRepository instance");
+    }
+
+ 
+    public static ExpenseRepository getInstance() {
+        return INSTANCE;
     }
 
     /**
