@@ -15,6 +15,12 @@ import java.util.List;
  * Supports both semicolon and comma separators.
  */
 public class CsvLoader {
+    private static final CsvLoader INSTANCE = new CsvLoader();
+    private CsvLoader() {}
+
+    public static CsvLoader getInstance() {
+        return INSTANCE;
+    }
 
     /**
      * Loads expenses from a CSV file.
