@@ -16,7 +16,9 @@ import java.util.List;
  */
 public class CsvLoader {
     private static final CsvLoader INSTANCE = new CsvLoader();
-    private CsvLoader() {}
+    private CsvLoader() {
+        System.out.println("Created new CsvLoader instance");
+    }
 
     public static CsvLoader getInstance() {
         return INSTANCE;
@@ -112,3 +114,39 @@ public class CsvLoader {
         }
     }
 }
+
+
+// Bill Pugh Implementation
+// public class CsvLoader {
+//     private CsvLoader() {}
+
+//     // The inner class is not loaded until getInstance() is called
+//     private static class LoaderHolder {
+//         private static final CsvLoader INSTANCE = new CsvLoader();
+//     }
+
+//     public static CsvLoader getInstance() {
+//         return LoaderHolder.INSTANCE;
+//     }
+// }
+
+
+// Double-Checked Locking (DCL)
+// must use the volatile keyword to prevent "instruction reordering," which could otherwise let a thread access a partially initialized object. 
+// public class CsvLoader {
+//     // The volatile keyword is critical for thread safety in DCL
+//     private static volatile CsvLoader instance;
+
+//     private CsvLoader() {}
+
+//     public static CsvLoader getInstance() {
+//         if (instance == null) { // First check (no locking)
+//             synchronized (CsvLoader.class) {
+//                 if (instance == null) { // Second check (with locking)
+//                     instance = new CsvLoader();
+//                 }
+//             }
+//         }
+//         return instance;
+//     }
+// }
