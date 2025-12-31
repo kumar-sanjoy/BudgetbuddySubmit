@@ -2,8 +2,7 @@ package cli;
 
 import io.CsvLoader;
 import io.ReportWriter;
-import io.HtmlReportWriter;
-import io.TxtReportWriter;
+import io.ReportFactory;
 import model.Expense;
 import service.ExpenseRepository;
 import service.Summarizer;
@@ -162,7 +161,7 @@ public class CommandHandler {
      */
     public void handleExportTxt(String outputPath) {
         try {
-            ReportWriter writer = new TxtReportWriter();
+            ReportWriter writer = ReportFactory.create("txt");
 
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
@@ -181,7 +180,7 @@ public class CommandHandler {
      */
     public void handleExportHtml(String outputPath) {
         try {
-            ReportWriter writer = new HtmlReportWriter();
+            ReportWriter writer = ReportFactory.create("html");
 
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
             exportRepo.addAll(mainRepository.findAll());
