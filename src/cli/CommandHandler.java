@@ -1,8 +1,9 @@
 package cli;
 
 import io.CsvLoader;
+import io.HtmlReportWriter;
 import io.ReportWriter;
-import io.ReportFactory;
+import io.TxtReportWriter;
 import model.Expense;
 import service.ExpenseRepository;
 import service.Summarizer;
@@ -161,11 +162,8 @@ public class CommandHandler {
      */
     public void handleExportTxt(String outputPath) {
         try {
-            ReportWriter writer = ReportFactory.create("txt");
-
+            ReportWriter writer = new TxtReportWriter();
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
-            exportRepo.addAll(mainRepository.findAll());
-            // another ExpenseRepository Created. eliminate object creation
 
             writer.writeReport(outputPath, exportRepo);
         } catch (IOException e) {
@@ -180,11 +178,8 @@ public class CommandHandler {
      */
     public void handleExportHtml(String outputPath) {
         try {
-            ReportWriter writer = ReportFactory.create("html");
-
+            ReportWriter writer = new HtmlReportWriter();
             ExpenseRepository exportRepo = ExpenseRepository.getInstance();
-            exportRepo.addAll(mainRepository.findAll());
-            // another instance of expenseRepository created.
 
             writer.writeReport(outputPath, exportRepo);
         } catch (IOException e) {
