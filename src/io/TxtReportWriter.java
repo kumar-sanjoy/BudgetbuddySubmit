@@ -7,6 +7,6 @@ public class TxtReportWriter extends ReportWriter {
     
     @Override
     protected ReportFormatter createFormatter() {
-        return new HtmlReportFormatter();
+        return new TxtReportFormatter();
     }
 }
