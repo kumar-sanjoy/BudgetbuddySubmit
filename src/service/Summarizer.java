@@ -79,4 +79,13 @@ public class Summarizer {
                 .mapToDouble(Expense::getAmount)
                 .sum();
     }
+
+    public double maxCategoryTotal() {
+        return categoryTotals(null)
+                .values()
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .max()
+                .orElse(0.0);
+    }
 }

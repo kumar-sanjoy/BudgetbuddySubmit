@@ -1,14 +1,22 @@
 package io;
 
-import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.List;
+import java.util.Map;
+
+import model.Expense;
 
 public interface ReportFormatter {
-    public String formatDate(LocalDate date);
 
-    public String formatMonth(YearMonth month);
+    String formatHeader();
 
-    public String formatAmount(double amount);
+    String formatFooter();
 
-    public String createBar(double value, double maxValue);
+    String formatMonthlySummary(Map<YearMonth, Double> monthlySummaries);
+
+    String formatCategoryBreakdown(Map<String, Double> categoryTotals, double maxAmount);
+
+    String formatRecentEntries(List<Expense> recentExpenses);
+
+    String formatGrandTotal(double total);
 }

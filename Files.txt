@@ -1,0 +1,115 @@
+// -------- Product --------
+interface ReportWriter {
+    void writeHeader(String title);
+    void writeBody(String content);
+    void writeFooter();
+}
+
+// -------- Concrete Products --------
+class HTMLReportWriter implements ReportWriter {
+
+    @Override
+    public void writeHeader(String title) {
+        System.out.println("<html><head><title>" + title + "</title></head><body>");
+    }
+
+    @Override
+    public void writeBody(String content) {
+        System.out.println("<p>" + content + "</p>");
+    }
+
+    @Override
+    public void writeFooter() {
+        System.out.println("</body></html>");
+    }
+}
+
+class TXTReportWriter implements ReportWriter {
+
+    @Override
+    public void writeHeader(String title) {
+        System.out.println("==== " + title + " ====");
+    }
+
+    @Override
+    public void writeBody(String content) {
+        System.out.println(content);
+    }
+
+    @Override
+    public void writeFooter() {
+        System.out.println("==== END ====");
+    }
+}
+
+// -------- Creator --------
+abstract class Formatter {
+
+    // Factory Method
+    protected abstract ReportWriter createWriter();
+
+    // Template logic using the product
+    public void formatReport(String title, String content) {
+        ReportWriter writer = createWriter();
+        writer.writeHeader(title);
+        writer.writeBody(content);
+        writer.writeFooter();
+    }
+}
+
+// -------- Concrete Creators --------
+class HTMLFormatter extends Formatter {
+
+    @Override
+    protected ReportWriter createWriter() {
+        return new HTMLReportWriter();
+    }
+}
+
+class TXTFormatter extends Formatter {
+
+    @Override
+    protected ReportWriter createWriter() {
+        return new TXTReportWriter();
+    }
+}
+
+// -------- Client --------
+class Application {
+
+    private Formatter formatter;
+
+    void initialize() {
+        String format = readConfig(); // "HTML" or "TXT"
+
+        if ("HTML".equalsIgnoreCase(format)) {
+            formatter = new HTMLFormatter();
+        } else if ("TXT".equalsIgnoreCase(format)) {
+            formatter = new TXTFormatter();
+        } else {
+            throw new RuntimeException("Unknown report format");
+        }
+    }
+
+    void generateReport() {
+        formatter.formatReport(
+            "Sales Report",
+            "Revenue increased by 20% this quarter."
+        );
+    }
+
+    private String readConfig() {
+        return "HTML"; // pretend this came from config
+    }
+}
+
+// -------- Main --------
+public class Main {
+    public static void main(String[] args) {
+        Application app = new Application();
+        app.initialize();
+        app.generateReport();
+    }
+}
+
+
